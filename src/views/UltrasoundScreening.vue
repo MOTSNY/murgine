@@ -47,7 +47,7 @@
           </v-col>
           <v-col
             cols="12"
-            style="max-height: calc(100vh - 263px); overflow: auto; padding-bottom: 20px;"
+            style="max-height: calc(100vh - 232px); overflow: auto; padding-bottom: 20px;"
           >
             <v-expansion-panels>
               <v-expansion-panel
