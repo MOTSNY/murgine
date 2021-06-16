@@ -49,20 +49,16 @@
           <v-col
             cols="12"
           >
-            <div id="textArea">
-              <v-textarea
-                :style="{color: colorTextArea + '!important', caretColor: colorTextArea + '!important'}"
-                :value="messagesTextArea"
-                success
-                auto-grow
-                label="Интерпретация показателей ИМТ"
-                rows="1"
-                shaped
-                readonly
-                outlined
-                :disabled="answer === 0"
-              ></v-textarea>
-            </div>
+            <v-btn
+              :disabled="disableAnswer"
+              style="color: white"
+              block
+              x-large
+              class="btn-bmi"
+              :color="colorTextArea"
+            >
+              {{messagesTextArea}}
+            </v-btn>
           </v-col>
         </v-row>
         <v-row
@@ -132,22 +128,22 @@ export default {
     },
 
     messagesTextArea () {
-      if (this.answer === 0) return ''
-      if (this.answer < 16) return 'Выраженный дефицит массы тела'
-      if (this.answer < 18.5) return 'Недостаточная (дефицит) масса тела'
+      if (this.answer === 0) return 'Оценка ИМТ'
+      if (this.answer < 16) return 'Дефицит массы'
+      if (this.answer < 18.5) return 'Недостаточная масса'
       if (this.answer < 25) return 'Норма'
-      if (this.answer < 30) return 'Избыточная масса тела (предожирение)'
+      if (this.answer < 30) return 'Избыточная масса'
       if (this.answer < 35) return 'Ожирение 1 степени'
       if (this.answer < 40) return 'Ожирение 2 степени'
       if (this.answer >= 40) return 'Ожирение 3 степени'
-      return ''
+      return 'Оценка ИМТ'
     },
 
     colorTextArea () {
       if (this.answer < 16) return '#1976D2' // 'blue darken-2'
       if (this.answer < 18.5) return '#0097A7' // 'cyan darken-2'
       if (this.answer < 25) return '#4CAF50' // 'green'
-      if (this.answer < 30) return '#FFD600' // 'yellow accent-4'
+      if (this.answer < 30) return '#FBC02D' // 'yellow darken-2'
       if (this.answer < 35) return '#FFA000' // 'amber darken-2'
       if (this.answer < 40) return '#FF6D00' // 'orange accent-4'
       if (this.answer >= 40) return '#D50000' // red accent-4
@@ -165,7 +161,6 @@ export default {
           this.answer = (this.weight / Math.pow(this.height, 2)).toFixed(2)
         }
         this.disableAnswer = false
-        this.switchColorTextArea(this.colorTextArea)
       } else {
         this.disableAnswer = true
         this.answer = 0
@@ -176,22 +171,11 @@ export default {
       $v.$reset()
       if (touchMap.has($v)) {
         clearTimeout(touchMap.get($v))
-        this.switchColorTextArea()
         this.disableAnswer = true
         this.answer = 0
       }
       touchMap.set($v, setTimeout(this.checkAnswer, 1000))
-    },
-
-    switchColorTextArea (color) {
-      const elem = document.getElementById('textArea').getElementsByClassName('v-label')[0]
-      if (color) {
-        elem.style.setProperty('color', color, 'important')
-      } else {
-        elem.style.setProperty('color', '', '')
-      }
     }
-
   }
 }
 </script>
