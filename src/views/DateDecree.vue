@@ -48,6 +48,7 @@
             cols="12"
           >
             <v-btn
+              :disabled="disableAnswer"
               block
               x-large
               class="btn-answer"
@@ -69,7 +70,8 @@ export default {
   components: { CalculatorTitle },
   data: () => ({
     dialog: false,
-    answer: 'ДД.ММ.ГГГГ'
+    answer: 'ДД.ММ.ГГГГ',
+    disableAnswer: true
   }),
 
   mounted () {
@@ -95,6 +97,7 @@ export default {
       },
       set: function (value) {
         this.lastMenstruation = value
+        this.disableAnswer = true
         this.answer = 'ДД.ММ.ГГГГ'
       }
     }
@@ -108,6 +111,7 @@ export default {
 
   methods: {
     checkAnswer () {
+      this.disableAnswer = false
       this.$refs.dialog.save(this.lastMenstruation)
       this.answer = this.formatDate(new Date(Date.parse(this.lastMenstruation) + 30 * 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10)) // +30 недель
     },

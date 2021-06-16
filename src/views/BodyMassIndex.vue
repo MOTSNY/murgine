@@ -72,6 +72,7 @@
             cols="12"
           >
             <v-btn
+              :disabled="disableAnswer"
               block
               x-large
               class="btn-answer"
@@ -99,7 +100,8 @@ export default {
   data: () => ({
     weight: '',
     height: '',
-    answer: 0
+    answer: 0,
+    disableAnswer: true
   }),
 
   validations: {
@@ -162,8 +164,10 @@ export default {
         } else {
           this.answer = (this.weight / Math.pow(this.height, 2)).toFixed(2)
         }
+        this.disableAnswer = false
         this.switchColorTextArea(this.colorTextArea)
       } else {
+        this.disableAnswer = true
         this.answer = 0
       }
     },
@@ -173,6 +177,7 @@ export default {
       if (touchMap.has($v)) {
         clearTimeout(touchMap.get($v))
         this.switchColorTextArea()
+        this.disableAnswer = true
         this.answer = 0
       }
       touchMap.set($v, setTimeout(this.checkAnswer, 1000))

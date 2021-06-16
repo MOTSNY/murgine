@@ -81,6 +81,7 @@
             cols="12"
           >
             <v-btn
+              :disabled="disableAnswer"
               block
               x-large
               class="btn-answer"
@@ -111,7 +112,8 @@ export default {
     days: null,
     lastUltrasound: null,
     dialog: false,
-    answer: ''
+    answer: '',
+    disableAnswer: true
   }),
 
   validations: {
@@ -158,7 +160,9 @@ export default {
       get: function () {
         return this.formatDate(this.lastUltrasound)
       },
-      set: function () {
+      set: function (value) {
+        this.lastUltrasound = value
+        this.disableAnswer = true
         this.answer = this.nullViewAnswer
       }
     }
@@ -177,11 +181,13 @@ export default {
         this.$refs.dialog.save(this.lastUltrasound)
         this.viewAnswer()
       } else {
+        this.disableAnswer = true
         this.answer = this.nullViewAnswer
       }
     },
 
     viewAnswer () {
+      this.disableAnswer = false
       const answer = Math.ceil((Date.now() - Date.parse(this.lastUltrasound)) / (1000 * 60 * 60 * 24)) + this.weeks * 7 + this.days
       if (this.$store.getters.getViewAnswer) {
         this.answer = 'Д:' + answer
@@ -197,9 +203,10 @@ export default {
 
     delayTouch ($v) {
       $v.$reset()
+      this.disableAnswer = true
+      this.answer = this.nullViewAnswer
       if (touchMap.has($v)) {
         clearTimeout(touchMap.get($v))
-        this.answer = this.nullViewAnswer
       }
       touchMap.set($v, setTimeout(this.checkAnswer, 1000))
     },

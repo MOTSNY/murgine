@@ -48,6 +48,7 @@
             cols="12"
           >
             <v-btn
+              :disabled="disableAnswer"
               block
               x-large
               class="btn-answer"
@@ -72,7 +73,8 @@ export default {
 
   data: () => ({
     dialog: false,
-    answer: ''
+    answer: '',
+    disableAnswer: true
   }),
 
   validations: {
@@ -109,6 +111,7 @@ export default {
       },
       set: function (value) {
         this.lastMenstruation = value
+        this.disableAnswer = true
         this.answer = this.nullViewAnswer
       }
     }
@@ -127,11 +130,13 @@ export default {
         this.$refs.dialog.save(this.lastMenstruation)
         this.viewAnswer()
       } else {
+        this.disableAnswer = true
         this.answer = this.nullViewAnswer
       }
     },
 
     viewAnswer () {
+      this.disableAnswer = false
       const answer = Math.ceil((Date.now() - Date.parse(this.lastMenstruation)) / (1000 * 60 * 60 * 24))
       if (this.$store.getters.getViewAnswer) {
         this.answer = 'Д:' + answer
