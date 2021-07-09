@@ -37,8 +37,8 @@
                 color="primary"
                 show-adjacent-months
                 v-model="lastMenstruation"
-                :max="new Date(Date.now() + 3*366*24*60*60*1000).toISOString().substr(0, 10)"
-                :min="new Date(Date.now() - 3*366*24*60*60*1000).toISOString().substr(0, 10)"
+                :max="new Date(Date.now() + 4*366*24*60*60*1000).toISOString().substr(0, 10)"
+                :min="new Date(Date.now() - 4*366*24*60*60*1000).toISOString().substr(0, 10)"
                 locale="ru-ru"
                 @change="checkAnswer"
               ></v-date-picker>
