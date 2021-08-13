@@ -7,9 +7,8 @@
     <author email="evgeniym96@gmail.com">
         Mitskevich Yauheni
     </author>
-    <icon src="../src/assets/icon.png"/>
-    <!-- this hook will point your config.xml to the DevServer on Serve -->
-    <hook type="after_prepare" src="../node_modules/vue-cli-plugin-cordova/serve-config-hook.js" />
+    <icon src="../src/assets/icon.png" />
+    <hook src="../node_modules/vue-cli-plugin-cordova/serve-config-hook.js" type="after_prepare" />
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
@@ -18,13 +17,17 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <platform name="electron">
+        <preference name="ElectronSettingsFilePath" value="../src/settings/electron/settings.json" />
+    </platform>
     <platform name="android">
         <allow-intent href="market:*" />
+        <preference name="orientation" value="portrait" />
+        <preference name="StatusBarBackgroundColor" value="#FF80AB" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <preference name="orientation" value="portrait" />
-    <preference name="StatusBarBackgroundColor" value="#FF80AB" />
+    <engine name="electron" />
 </widget>

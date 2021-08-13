@@ -1,3 +1,4 @@
+<!-- @author Mitskevich Yauheni -->
 <template>
   <v-card
     class="calculator-page"

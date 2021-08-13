@@ -1,8 +1,9 @@
+<!-- @author Mitskevich Yauheni -->
 <template>
   <v-app>
     <v-overlay
       style="z-index: 14"
-      :color="this.$vuetify.theme.dark ? 'black' : 'white'"
+      :color="$vuetify.theme.dark ? 'black' : 'white'"
       opacity="1"
       :value="overlay"
     >
@@ -12,12 +13,21 @@
         size="64"
       ></v-progress-circular>
     </v-overlay>
+    <v-snackbar
+      v-model="snackbar"
+      timeout="5000"
+      :multi-line="true"
+      color="primary"
+      elevation="24"
+    >
+      {{'Оставшееся время пробного периода: \n' + time}}
+    </v-snackbar>
     <v-app-bar
       class="c-app-bar"
       app
       color="primary"
       dark
-      :prominent="this.$route.path === '/'"
+      :prominent="$route.path === '/' || $route.path[3] === '/'"
       src="./assets/font_bar.jpg"
     >
       <template v-slot:img="{ props }">
@@ -36,11 +46,10 @@
         urgine
       </v-toolbar-title>
       <v-spacer/>
-      <v-btn @click="changeDarkTheme"
+      <v-btn @click="goToPage('/Settings')"
              color="primary"
              icon>
-        <v-icon v-if="$vuetify.theme.dark">mdi-brightness-7</v-icon>
-        <v-icon v-else>mdi-brightness-4</v-icon>
+        <v-icon>mdi-cog</v-icon>
       </v-btn>
 
     </v-app-bar>
@@ -56,52 +65,53 @@
             :key="calculator.id"
             :cols="calculator.cols"
           >
-            <v-card>
+            <v-card class="elevation-3">
+              <v-dialog
+                v-model='calculator.description.show'
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    class="btn-help-circle"
+                    icon
+                    small
+                    fab
+                    :ripple="{ class: 'primary--text'}"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon>mdi-help-circle-outline</v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    {{calculator.name}}
+                  </v-card-title>
+                  <v-card-text>
+                    {{calculator.description.text}}
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer/>
+                    <v-btn
+                      color="primary"
+                      text
+                      @click="calculator.description.show = false"
+                    >
+                      Назад
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
               <v-card-text>
                 <v-row dense align="center">
                   <v-col class="text-h6 text--primary">
                     {{calculator.name}}
-                    <v-dialog
-                      v-model='calculator.description.show'
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          icon
-                          small
-                          fab
-                          :ripple="{ class: 'primary--text'}"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-icon>mdi-information-outline</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-card>
-                        <v-card-title>
-                            {{calculator.name}}
-                        </v-card-title>
-                        <v-card-text>
-                          {{calculator.description.text}}
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer/>
-                          <v-btn
-                            color="primary"
-                            text
-                            @click="calculator.description.show = false"
-                          >
-                            Назад
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
                   </v-col>
                   <v-btn
                     color="primary"
                     fab
                     x-large
                     dark
-                    @click="$router.push(calculator.path)"
+                    @click="goToPage(calculator.path)"
                   >
                     <v-icon>mdi-calculator-variant</v-icon>
                   </v-btn>
@@ -204,7 +214,9 @@ export default {
       }
     ],
     drawer: false,
-    overlay: true
+    overlay: true,
+    snackbar: false,
+    time: ''
   }),
 
   beforeCreate () {
@@ -212,18 +224,58 @@ export default {
   },
 
   mounted () {
+    // в основном для сборки electron
+    document.getElementsByTagName('html')[0].classList.add('scrollbar-hidden')
+
     setTimeout(() => {
-      this.$router.replace('/')
       this.overlay = false
-      // TODO не забывать перед сборкой ставить 2000
+      this.$router.replace('/')
+      // this.$store.dispatch('checkLicenseTime')
+
+      //   if (this.$store.getters.isLicenseExpiring) {
+      //     this.$router.replace('/')
+      //   } else {
+      //     this.$router.replace('/LicenseExpiring')
+      //   }
     }, 2000)
   },
 
   methods: {
-    changeDarkTheme () {
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
-      localStorage.setItem('darkTheme', this.$vuetify.theme.dark)
+
+    goToPage (path) {
+      // this.$store.dispatch('checkLicenseTime')
+      if (this.$route.path !== path) {
+        this.$router.push(path)
+      }
     }
+
+    // openSnackbar () {
+    //   this.snackbar = !this.snackbar
+    //   this.nextTime()
+    //   let time
+    //   if (this.snackbar) {
+    //     time = setInterval(this.nextTime, 1000)
+    //     setTimeout(function () {
+    //       clearInterval(time)
+    //     }, 5000)
+    //   } else {
+    //     clearInterval(time)
+    //   }
+    // },
+
+    // nextTime () {
+    //   const now = new Date()
+    //   const ExpiringTimeLicense = new Date(2021, 6, 26, 18)
+    //   const timeDifference = ExpiringTimeLicense - now
+    //   const day = Math.trunc(timeDifference / 24 / 60 / 60 / 1000)
+    //   const td = timeDifference - day * 24 * 60 * 60 * 1000
+    //   const hours = Math.trunc(td / 60 / 60 / 1000)
+    //   const dh = td - hours * 60 * 60 * 1000
+    //   const minutes = Math.trunc(dh / 60 / 1000)
+    //   const hm = dh - minutes * 60 * 1000
+    //   const seconds = Math.trunc(hm / 1000)
+    //   this.time = day + 'Д ' + hours + ':' + minutes + ':' + seconds
+    // }
   }
 }
 </script>
@@ -232,6 +284,16 @@ export default {
 
 .c-app-bar {
   z-index: 11!important;
+}
+
+.btn-help-circle {
+  position: absolute;
+  transform: scale(0.75);
+  top: -9px;
+  left: -9px;
+}
+.theme--dark.btn-help-circle {
+  color: rgba(255, 255, 255, 0.46)!important;
 }
 
 </style>

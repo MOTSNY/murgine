@@ -1,3 +1,4 @@
+<!-- @author Mitskevich Yauheni -->
 <template>
   <v-card
     class="calculator-page"
@@ -86,7 +87,6 @@ export default {
 
   data: () => ({
     dialog: false,
-    weeksVisits: [12, 14, 20, 26, 30, 34, 36, 38, 40],
     answers: []
   }),
 
@@ -97,6 +97,10 @@ export default {
   },
 
   computed: {
+
+    weeksVisits () {
+      return this.$store.getters.getWeeksVisits
+    },
 
     lastMenstruation: {
       get: function () {
@@ -131,14 +135,38 @@ export default {
       this.answers = []
       const dateLastMenstruation = new Date(this.lastMenstruation)
       const millisecondsDay = 24 * 60 * 60 * 1000
+      let fromWeekVisit
+      let toWeekVisit
       this.weeksVisits.forEach(weekVisit => {
-        const isActualDate = (Date.parse(this.lastMenstruation) + (weekVisit * 7 + 7 - dateLastMenstruation.getDay()) * millisecondsDay) - Date.now()
+        if (Array.isArray(weekVisit)) {
+          fromWeekVisit = weekVisit[0]
+          toWeekVisit = weekVisit[1]
+        } else {
+          toWeekVisit = weekVisit
+        }
+        const isActualDate = (Date.parse(this.lastMenstruation) + (toWeekVisit * 7 + 7 - dateLastMenstruation.getDay()) * millisecondsDay) - Date.now()
         if (isActualDate > 0) {
           const dateVisit = new Date(Date.now() + isActualDate)
-          if (weekVisit === 12) {
-            this.answers.push({ week: '8 - 12', date: this.formatDate(new Date(dateVisit - (4 * 7 + 6) * millisecondsDay).toISOString().substr(0, 10)) + ' - ' + this.formatDate(new Date(dateVisit - 2 * millisecondsDay).toISOString().substr(0, 10)) })
+          if (Array.isArray(weekVisit)) {
+            this.answers.push(
+              {
+                week: fromWeekVisit + ' - ' + toWeekVisit,
+                date:
+                  this.formatDate(new Date(dateVisit - ((toWeekVisit - fromWeekVisit) * 7 + 6) * millisecondsDay).toISOString().substr(0, 10)) +
+                  ' - ' +
+                  this.formatDate(new Date(dateVisit - 2 * millisecondsDay).toISOString().substr(0, 10))
+              }
+            )
           } else {
-            this.answers.push({ week: weekVisit, date: this.formatDate(new Date(dateVisit - 6 * millisecondsDay).toISOString().substr(0, 10)) + ' - ' + this.formatDate(new Date(dateVisit - 2 * millisecondsDay).toISOString().substr(0, 10)) })
+            this.answers.push(
+              {
+                week: toWeekVisit,
+                date:
+                  this.formatDate(new Date(dateVisit - 6 * millisecondsDay).toISOString().substr(0, 10)) +
+                  ' - ' +
+                  this.formatDate(new Date(dateVisit - 2 * millisecondsDay).toISOString().substr(0, 10))
+              }
+            )
           }
         }
       })

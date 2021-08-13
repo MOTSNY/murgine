@@ -1,3 +1,4 @@
+<!-- @author Mitskevich Yauheni -->
 <template>
   <v-card-text>
     <v-row dense align="center">
@@ -8,7 +9,7 @@
         color="primary"
         text
         icon
-        @click="$router.go(-1)"
+        @click="goToBack"
       >
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -19,7 +20,18 @@
 <script>
 export default {
   name: 'calculatorTitle',
-  props: ['titleText']
+  props: ['titleText'],
+  methods: {
+    goToBack () {
+      this.$router.go(-1)
+      // this.$store.dispatch('checkLicenseTime')
+      // if (this.$store.getters.isLicenseExpiring) {
+      //   this.$router.go(-1)
+      // } else {
+      //   this.$router.replace('/LicenseExpiring')
+      // }
+    }
+  }
 }
 </script>
 

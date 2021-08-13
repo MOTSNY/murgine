@@ -14,10 +14,10 @@ export default new Vuetify({
   theme: {
     themes: {
       light: {
-        primary: colors.pink.accent1 // #E040FB
+        primary: colors.pink.accent1 // #ff80ab
       },
       dark: {
-        primary: colors.pink.accent1 // #E040FB
+        primary: colors.pink.accent1 // #ff80ab
       }
     }
   }

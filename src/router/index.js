@@ -7,6 +7,8 @@ import GestationalAgeByMenstruation from '../views/GestationalAgeByMenstruation'
 import DatesVisitingAntenatalClinic from '../views/DatesVisitingAntenatalClinic'
 import EstimatedDateBirth from '../views/EstimatedDateBirth'
 import UltrasoundScreening from '../views/UltrasoundScreening'
+import LicenseExpiring from '../views/LicenseExpiring'
+import Settings from '../views/Settings'
 
 Vue.use(VueRouter)
 
@@ -50,6 +52,16 @@ const routes = [
     path: '/UltrasoundScreening',
     name: 'UltrasoundScreening',
     component: UltrasoundScreening
+  },
+  {
+    path: '/LicenseExpiring',
+    name: 'LicenseExpiring',
+    component: LicenseExpiring
+  },
+  {
+    path: '/Settings',
+    name: 'Settings',
+    component: Settings
   }
   // {
   //   path: '/about',
